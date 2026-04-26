@@ -284,6 +284,38 @@ class FileSystem(object):
                             single_output[3],
                         ),
                     )
+                elif single_output[0] == "Nautilus":
+                    subgroup.create_dataset(
+                        "samples",
+                        data=np.array(
+                            single_output[1],
+                        ),
+                    )
+                    subgroup.create_dataset(
+                        "param_list", data=np.array(single_output[2], dtype="S25")
+                    )
+                    subgroup.create_dataset(
+                        "log_likelihood",
+                        data=np.array(
+                            single_output[3],
+                        ),
+                    )
+                    subgroup.create_dataset(
+                        "log_z",
+                        data=np.array(single_output[4]),
+                    )
+                    subgroup.create_dataset(
+                        "log_z_err",
+                        data=np.array(single_output[5]),
+                    )
+                    results_json = json.dumps(
+                        self.encode_numpy_arrays(single_output[6]),
+                        ensure_ascii=False,
+                    ).encode("utf-8")
+                    subgroup.create_dataset(
+                        "results_object",
+                        data=np.frombuffer(results_json, dtype=np.uint8),
+                    )
                 else:
                     raise ValueError(
                         f"Fitting type {single_output[0]} not recognized for "
@@ -380,6 +412,21 @@ class FileSystem(object):
                         ]
                     )
                     fitting_step.append(group[index]["log_likelihood"][:])
+                elif fitting_step[0] == "Nautilus":
+                    fitting_step.append(group[index]["samples"][:])
+                    fitting_step.append(
+                        [
+                            str(s, encoding="utf-8")
+                            for s in group[index]["param_list"][:]
+                        ]
+                    )
+                    fitting_step.append(group[index]["log_likelihood"][:])
+                    fitting_step.append(group[index]["log_z"][()])
+                    fitting_step.append(group[index]["log_z_err"][()])
+                    results_bytes = bytes(group[index]["results_object"][:])
+                    fitting_step.append(
+                        self.decode_numpy_arrays(json.loads(results_bytes.decode("utf-8")))
+                    )
                 # else:
                 #     raise ValueError('Fitting type {} not recognized for '
                 #                      'loading output!'.format(fitting_step[0]

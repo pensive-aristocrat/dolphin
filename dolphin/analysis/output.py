@@ -35,6 +35,12 @@ class Output(Processor):
         self._model_settings = None
         self._samples_mcmc = None
         self._params_mcmc = None
+        self._samples_nautilus = None
+        self._params_nautilus = None
+        self._log_l_nautilus = None
+        self._log_z_nautilus = None
+        self._log_z_err_nautilus = None
+        self._results_nautilus = None
 
     @property
     def fit_output(self):
@@ -122,6 +128,69 @@ class Output(Processor):
         else:
             return len(self._params_mcmc)
 
+    @property
+    def samples_nautilus(self):
+        """The array of Nautilus samples from the model run.
+
+        :return:
+        :rtype:
+        """
+        if self._samples_nautilus is None:
+            return []
+        else:
+            return self._samples_nautilus
+
+    @property
+    def params_nautilus(self):
+        """The non-linear parameters sampled with Nautilus.
+
+        :return:
+        :rtype:
+        """
+        if self._params_nautilus is None:
+            return []
+        else:
+            return self._params_nautilus
+
+    @property
+    def log_l_nautilus(self):
+        """The log-likelihood values from Nautilus.
+
+        :return:
+        :rtype:
+        """
+        return self._log_l_nautilus
+
+    @property
+    def log_z_nautilus(self):
+        """The log-evidence from Nautilus.
+
+        :return:
+        :rtype:
+        """
+        return self._log_z_nautilus
+
+    @property
+    def log_z_err_nautilus(self):
+        """The log-evidence uncertainty from Nautilus.
+
+        :return:
+        :rtype:
+        """
+        return self._log_z_err_nautilus
+
+    @property
+    def results_nautilus(self):
+        """The raw Nautilus results object from the model run.
+
+        :return:
+        :rtype:
+        """
+        if self._results_nautilus is None:
+            return {}
+        else:
+            return self._results_nautilus
+
     def swim(self, *args, **kwargs):
         """Override the `swim` method of the `Processor` class to make it not
         callable."""
@@ -137,6 +206,18 @@ class Output(Processor):
         :return: output dictionary
         :rtype: `dict`
         """
+        self._fit_output = None
+        self._kwargs_result = None
+        self._model_settings = None
+        self._samples_mcmc = None
+        self._params_mcmc = None
+        self._samples_nautilus = None
+        self._params_nautilus = None
+        self._log_l_nautilus = None
+        self._log_z_nautilus = None
+        self._log_z_err_nautilus = None
+        self._results_nautilus = None
+
         output = self.file_system.load_output(lens_name, model_id)
 
         self._model_settings = output["settings"]
@@ -147,6 +228,13 @@ class Output(Processor):
         if self.fit_output[-1][0] == "emcee":
             self._samples_mcmc = self.fit_output[-1][1]
             self._params_mcmc = self.fit_output[-1][2]
+        elif self.fit_output[-1][0] == "Nautilus":
+            self._samples_nautilus = self.fit_output[-1][1]
+            self._params_nautilus = self.fit_output[-1][2]
+            self._log_l_nautilus = self.fit_output[-1][3]
+            self._log_z_nautilus = self.fit_output[-1][4]
+            self._log_z_err_nautilus = self.fit_output[-1][5]
+            self._results_nautilus = self.fit_output[-1][6]
 
         return output
 

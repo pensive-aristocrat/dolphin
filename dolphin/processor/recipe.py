@@ -259,6 +259,7 @@ class Recipe(object):
                 if "threadCount" not in sampling_kwargs:
                     sampling_kwargs["threadCount"] = self._thread_count
 
+            if self._config.settings["fitting"]["sampler"] in ["emcee", "Nautilus"]:
                 try:
                     self._config.settings["fitting"]["sampler_settings"]["init_samples"]
                 except (NameError, KeyError):
