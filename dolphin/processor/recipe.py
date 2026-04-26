@@ -243,8 +243,8 @@ class Recipe(object):
                 # "dynesty",
                 # "dyPolyChord",
                 # "MultiNest",
-                # "nested_sampling",
-                # "Nautilus",
+                "nested_sampling",
+                "Nautilus",
             ]
             if self._config.settings["fitting"]["sampler"] not in supported_samplers:
                 raise ValueError(
