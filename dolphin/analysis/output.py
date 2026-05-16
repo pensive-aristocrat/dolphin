@@ -760,7 +760,11 @@ class Output(Processor):
         :return: `ImSim` instance
         :rtype: `lenstronomy.ImSim.im_sim.ImSim`
         """
-        config = ModelConfig(lens_name=lens_name, settings=self._model_settings)
+        config = ModelConfig(
+            lens_name=lens_name,
+            io_directory=self.io_directory,
+            settings=self._model_settings,
+        )
 
         # kwargs_numerics = config.get_kwargs_numerics()
         kwargs_model = config.get_kwargs_model()

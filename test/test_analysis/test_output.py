@@ -111,6 +111,18 @@ class TestOutput(object):
         assert self.output.lenstronomy_version == lenstronomy.__version__
         assert self.output.jaxtronomy_version == "0.1.0"
 
+    def test_get_im_sim(self):
+        """Test that `get_im_sim` can load masks from the output workspace.
+
+        :return:
+        :rtype:
+        """
+        self.output.load_output("lens_system2", "example")
+
+        im_sim = self.output.get_im_sim("lens_system2", band_index=0)
+
+        assert im_sim is not None
+
     def test_load_output_version_warnings(self, capsys):
         """Test that correct warnings are printed when versions mismatch.
 
